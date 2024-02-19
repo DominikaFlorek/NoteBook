@@ -1,38 +1,172 @@
 .App {
-  text-align: center;
+	margin: 0 100px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	flex-direction: column;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+/* LOGO */
+
+.logo {
+	display: flex;
+	justify-content: space-between;
+	margin: 10px 0;
+	padding: 10px 0;
+	border-bottom: solid 1px aliceblue;
+	color: aliceblue;
+	width: 100%;
+	letter-spacing: 3px;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+/* NOTEBOOK */
+
+.notebook {
+	width: 100%;
+	display: flex;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+.notes {
+	width: 60%;
+	margin: 5px 0;
+	padding: 10px 0;
+	border-right: solid 1px aliceblue;
 }
 
-.App-link {
-  color: #61dafb;
+.heading2 {
+	color: aliceblue;
+	letter-spacing: 3px;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.form {
+	width: 100%;
+	margin-bottom: 40px;
+}
+
+.input {
+	width: 85%;
+	margin-right: 15px;
+	padding: 10px 1px;
+	background-color: aliceblue;
+	color: #222;
+	border: none;
+	font-weight: bold;
+	border-radius: 3px;
+}
+
+.btnAdd {
+	margin: 0 10px;
+	width: 50px;
+	padding: 10px 1px;
+	background-color: aliceblue;
+	color: #222;
+	border: none;
+
+	font-weight: bold;
+	border-radius: 3px;
+	cursor: pointer;
+}
+
+.note {
+	width: 95%;
+	margin: 5px 0;
+	padding: 5px 0;
+	border-bottom: 1px solid aliceblue;
+}
+
+.list {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	color: aliceblue;
+	list-style: none;
+}
+
+.task-info {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.task-date {
+	margin: 0 20px;
+	/* font-size: 12px;s */
+	font-style: italic;
+	color: #777;
+}
+
+.list-btns {
+	margin: 0 10px;
+	margin-right: 0;
+}
+
+.btn-done,
+.btn-delete {
+	padding: 5px 2px;
+	margin: 0 3px;
+	background: none;
+	border: none;
+	font-size: 16px;
+	cursor: pointer;
+}
+
+.btn-done {
+	filter: invert(100%) saturate(300%);
+}
+
+.btn-delete {
+	margin-right: 0px;
+	filter: hue-rotate(100deg) saturate(300%);
+}
+
+/* SIDEBAR */
+
+.sidebar {
+	width: 40%;
+	display: flex;
+	flex-direction: column;
+}
+
+.weather {
+	width: 100%;
+	margin: 5px 15px;
+	padding: 5px;
+}
+
+.weather-city {
+	text-align: center;
+}
+
+.weather-panel {
+	margin: 5px 0;
+	padding: 10px 0;
+	width: 95%;
+	border-bottom: 1px solid aliceblue;
+}
+
+.weather-data {
+	margin: 5px 0;
+	color: aliceblue;
+	display: flex;
+	justify-content: space-around;
+	align-items: center;
+}
+
+.weather-temp {
+	text-align: end;
+}
+
+.weather-current-temp {
+	font-size: 30px;
+}
+
+.currency {
+	margin: 5px 15px;
+	padding: 5px;
+	color: aliceblue;
+}
+
+.currency-data {
+	padding: 5px;
+	text-align: center;
 }
