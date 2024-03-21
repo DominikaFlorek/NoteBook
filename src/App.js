@@ -6,21 +6,21 @@ const day = date.getDate();
 const month = date.getMonth();
 const year = date.getFullYear();
 
-const tasksArray = [
-	{
-		description: 'Learn React',
-		date: `${day}/${month + 1}/${year}`,
-		done: true,
-	},
-	{
-		description: 'Read a book',
-		date: `${day}/${month + 1}/${year}`,
-		done: false,
-	},
-	{ description: 'Go to the meeting', date: '1/1/2024', done: true },
-	{ description: 'Call to friend', date: `10/2/2024`, done: false },
-	{ description: 'Water the plants', date: `14/2/2024`, done: false },
-];
+// const tasksArray = [
+// 	{
+// 		description: 'Learn React',
+// 		date: `${day}/${month + 1}/${year}`,
+// 		done: true,
+// 	},
+// 	{
+// 		description: 'Read a book',
+// 		date: `${day}/${month + 1}/${year}`,
+// 		done: false,
+// 	},
+// 	{ description: 'Go to the meeting', date: '1/1/2024', done: true },
+// 	{ description: 'Call to friend', date: `10/2/2024`, done: false },
+// 	{ description: 'Water the plants', date: `14/2/2024`, done: false },
+// ];
 
 export default function App() {
 	return (
@@ -35,19 +35,53 @@ function Logo() {
 	return (
 		<div className='logo'>
 			<h1>NoteBook</h1>
-			<h1>
-				{day}/{month + 1}/{year}
-			</h1>
+			<CurrentDay />
 		</div>
+	);
+}
+
+function CurrentDay() {
+	const [time, setTime] = useState(new Date());
+
+	useEffect(function () {
+		setInterval(() => setTime(new Date()), 1000);
+	}, []);
+
+	return (
+		<h1>
+			{time
+				.toLocaleString(undefined, {
+					dateStyle: 'short',
+					timeStyle: 'medium',
+				})
+				.replaceAll('.', '/')}
+		</h1>
 	);
 }
 
 function Notebook() {
 	// const [tasks, setTasks] = useState([...tasksArray]);
 	const rowTasks = window.localStorage.getItem('tasks');
-
 	const taskLocalStorage = rowTasks ? JSON.parse(rowTasks) : [];
 	const [tasks, setTasks] = useState(taskLocalStorage);
+	const [sortBy, setSortBy] = useState('');
+
+	function handleSortTasks() {
+		if (sortBy === 'order') {
+			setTasks(
+				tasks
+					.slice()
+					.sort(
+						(a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
+					)
+			);
+		}
+
+		if (sortBy === 'done') {
+			setTasks(tasks.slice().sort((a, b) => a.done - b.done));
+			console.log(tasks);
+		}
+	}
 
 	function handleLocalStorage(tasks) {
 		window.localStorage.setItem('tasks', JSON.stringify(tasks));
@@ -79,16 +113,29 @@ function Notebook() {
 		<div className='notebook'>
 			<Notes
 				tasks={tasks}
+				setTasks={setTasks}
 				onAddTasks={handleAddTasks}
 				onTaskUpdate={handleTaskUpdate}
 				onTaskRemove={handleTaskRemove}
+				onSortTasks={handleSortTasks}
+				setSortedTasks={handleSortTasks}
+				setSortBy={setSortBy}
 			/>
 			<Sidebar />
 		</div>
 	);
 }
 
-function Notes({ onAddTasks, tasks, onTaskUpdate, onTaskRemove }) {
+function Notes({
+	onAddTasks,
+	tasks,
+	setTasks,
+	onSortTasks,
+	onTaskUpdate,
+	onTaskRemove,
+	sortBy,
+	setSortBy,
+}) {
 	const [description, setDescription] = useState('');
 
 	function handleSubmit(e) {
@@ -98,7 +145,7 @@ function Notes({ onAddTasks, tasks, onTaskUpdate, onTaskRemove }) {
 
 		const newTask = {
 			description,
-			date: `${day}/${month + 1}/${year}`,
+			date: new Date().toISOString(),
 			done: false,
 		};
 
@@ -108,6 +155,15 @@ function Notes({ onAddTasks, tasks, onTaskUpdate, onTaskRemove }) {
 
 		setDescription('');
 	}
+
+	useEffect(
+		function () {
+			onSortTasks();
+		},
+		[sortBy]
+	);
+
+	// Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.
 
 	return (
 		<div className='notes'>
@@ -137,6 +193,16 @@ function Notes({ onAddTasks, tasks, onTaskUpdate, onTaskRemove }) {
 					key={task.description}
 				/>
 			))}
+			{tasks.length > 0 && (
+				<select
+					className='selectBtn'
+					value={sortBy}
+					onChange={(e) => setSortBy(e.target.value)}
+				>
+					<option value={'order'}>Sorted by input order</option>
+					<option value={'done'}>Sorted by done</option>
+				</select>
+			)}
 		</div>
 	);
 }
@@ -149,7 +215,12 @@ function Note({ description, date, done, onTaskUpdate, onTaskRemove }) {
 					<p style={done ? { textDecoration: 'line-through' } : {}}>
 						{description}
 					</p>
-					<p className='task-date'> {date}</p>
+					<p className='task-date'>
+						{' '}
+						{new Date(date)
+							.toLocaleString(undefined, { dateStyle: 'short' })
+							.replaceAll('.', '/')}
+					</p>
 				</div>
 
 				<div className='list-btns'>
@@ -210,7 +281,7 @@ function Weather() {
 function WeatherPanel({ weather }) {
 	return (
 		<div className='weather-panel'>
-			<h2 className='heading2 weather-city'>{weather.location?.name}</h2>
+			<h2 className='heading2 sidebar-heading'>{weather.location?.name}</h2>
 			<div className='weather-data'>
 				<div className='weather-temp'>
 					<p className='weather-current-temp'>{weather.current?.temp_c}℃</p>
@@ -241,8 +312,6 @@ function Currency() {
 				`https://api.freecurrencyapi.com/v1/latest?base_currency=${baseCurrency}&apikey=${key}`
 			);
 			const data = await res.json();
-			console.log(data);
-			console.log(data.data.EUR);
 			setCurrency(data);
 		}
 
@@ -260,7 +329,9 @@ function Currency() {
 function AverageRate({ currency }) {
 	return (
 		<div className='currency-data'>
-			<h2 className='heading2'>Current average exchange rate</h2>
+			<h2 className='heading2 sidebar-heading'>
+				Current average exchange rate
+			</h2>
 			<p> 1 EUR = {(1 / currency.data?.EUR).toFixed(2)} PLN</p>
 			<p> 1 USD = {(1 / currency.data?.USD).toFixed(2)} PLN</p>
 			<p> 1 GBP = {(1 / currency.data?.GBP).toFixed(2)} PLN</p>
